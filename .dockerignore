@@ -1,0 +1,22 @@
+# 环境变量和授权凭证不能打包进镜像
+.env
+*.env
+token.pickle
+credentials.json
+
+# Large local files and logs
+*.tar
+*.log
+
+# Python cache and virtual environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Git 和编辑器配置
+.git/
+.gitignore
+.vscode/
+.idea/

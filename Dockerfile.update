@@ -1,0 +1,2 @@
+FROM myagent:latest
+COPY app /app/app

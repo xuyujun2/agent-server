@@ -1,0 +1,20 @@
+# 敏感配置和授权凭证
+.env
+*.env
+token.pickle
+credentials.json
+
+# 镜像包和日志
+*.tar
+*.log
+
+# Python 缓存和虚拟环境
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# 编辑器配置
+.vscode/
+.idea/
