@@ -34,7 +34,7 @@ def run_code(code: str) -> str:
     encoded_code = base64.b64encode(code.encode("utf-8")).decode("ascii")
 
     # os.environ['SANDBOX_CODE'] 获取环境变量，也就是获取到了业务代码
-    # exec()：执行 Python 代码字符串     compile(code, '<generated_code>', 'exec')：把代码字符串编译成可执行代码对象
+    # exec()：执行 Python 代码字符串，就等于是运行代码，看代码有没有报错    compile(code, '<generated_code>', 'exec')：把代码字符串编译成可执行代码对象
     command = [
         "python",
         "-c",

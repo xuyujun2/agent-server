@@ -18,3 +18,4 @@ docker==7.1.0
 pdfplumber
 python-multipart
 Pillow
+locust==2.32.6
