@@ -2,11 +2,11 @@ import requests
 import time
 import hmac
 import hashlib
-import base64`r`nimport os`r`n
+import base64
 
 def send_dingtalk_alert(content: str):
-    token = os.getenv("DINGTALK_TOKEN")
-    secret = os.getenv("DINGTALK_SECRET")
+    token = "4a20ee85d5d794f607db009fc064a3997c45698d64b3d51502080e3be40af075"
+    secret = "SEC6dcaa939cac24981028ee1a639b285bb79a21ea395ea6ccaf26d950f1c52f4c6"
 
     timestamp = str(round(time.time() * 1000))
     sign_str = timestamp + "\n" + secret
@@ -18,4 +18,5 @@ def send_dingtalk_alert(content: str):
         "msgtype": "text",
         "text": {"content": f"客服接口告警：{content}"}
     }, timeout=5)
+
 
