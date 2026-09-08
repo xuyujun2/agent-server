@@ -9,6 +9,9 @@ class Config:
     DB_USER = os.getenv("DB_USER", "root")
     DB_PASSWORD = os.getenv("DB_PASSWORD", "123456")
     DB_NAME = os.getenv("DB_NAME", "customer_service")
+
+    # Redis（本地默认连接本机；Docker 部署时通过环境变量改为 redis://redis:6379/0）
+    REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
     
     # OpenAI
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "你的key")

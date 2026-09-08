@@ -4,18 +4,20 @@ import json
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse  # FastAPI 的流式响应，用于实现 SSE
 from app.models.schemas import AskRequest
-from app.agents.ask_agent import create_agent_executor
+from app.agents.ask_agent import create_agent_executor, get_chat_history
 from app.utils.logger import logger
+from app.utils.dingtalk_alert import send_dingtalk_alert
 
 router = APIRouter(prefix="/agent", tags=["客服"])
 
-# 存储每个用户的执行器（简单版，实际可用Redis）
 sessions = {}
 
 @router.post("/ask")
 def ask(request: AskRequest):
     """客服对话接口"""
     try:
+        raise Exception("测试告警")  # 强制触发异常，测试钉钉告警
+    
         # 获取或创建用户的Agent执行器
         if request.user_id not in sessions:
             sessions[request.user_id] = create_agent_executor(request.user_id)
@@ -27,6 +29,7 @@ def ask(request: AskRequest):
     
     except Exception as e:
         logger.error(f"客服接口异常: {str(e)}")
+        send_dingtalk_alert(str(e))
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -91,11 +94,12 @@ def _sse_event(event_type: str, content: str = "") -> str:
 @router.get("/history")
 def get_history(user_id: str):
     """获取用户聊天历史"""
-    if user_id not in sessions:
-        return {"code": 0, "data": {"history": []}}
-    
-    # 从字典里取 memory 对象，取 messages
-    memory = sessions[user_id]["memory"]
+    # executor 在内存中就复用；服务重启后则直接从 Redis 读取
+    memory = (
+        sessions[user_id]["memory"]
+        if user_id in sessions
+        else get_chat_history(user_id)
+    )
     history = [
         {"role": msg.type, "content": msg.content}
         for msg in memory.messages

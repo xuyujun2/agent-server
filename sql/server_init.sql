@@ -31,4 +31,11 @@ INSERT INTO `orders` (`order_no`, `user_id`, `product_name`, `product_price`, `s
 ('ORD20260805002', 'user_001', 'AirPods Pro 2', 1899.00, '已发货'),
 ('ORD20260805003', 'user_002', 'MacBook Pro 14', 16999.00, '已签收'),
 ('ORD20260805004', 'user_003', 'iPad Air', 4799.00, '已完成'),
-('ORD20260805005', 'user_001', 'Apple Watch', 3199.00, '待支付');
+('ORD20260805005', 'user_001', 'Apple Watch', 3199.00, '待支付'),
+
+-- 用于场景测试脚本，别改状态
+('ORD20260805006', 'user_006', 'iPhone 15 Pro Max', 8999.00, '已支付'),
+('ORD20260805007', 'user_006', 'AirPods Pro 2', 1899.00, '已发货'),
+('ORD20260805008', 'user_006', 'MacBook Pro 14', 16999.00, '已签收'),
+('ORD20260805009', 'user_007', 'iPad Air', 4799.00, '已完成'),
+('ORD202608050010', 'user_007', 'Apple Watch', 3199.00, '待支付');
