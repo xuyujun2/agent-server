@@ -5,6 +5,7 @@ from langchain_community.chat_message_histories import RedisChatMessageHistory
 
 from app.config import Config
 from app.tools.order_tools import query_order, query_my_orders, apply_return
+from app.tools.knowledge_tools import search_knowledge
 from app.utils.logger import logger
 
 # 初始化模型
@@ -16,7 +17,7 @@ llm = ChatOpenAI(
 )
 
 # 工具列表
-tools = [query_order, query_my_orders, apply_return]
+tools = [query_order, query_my_orders, apply_return, search_knowledge]
 
 
 def get_chat_history(user_id: str):
@@ -98,6 +99,8 @@ prompt = ChatPromptTemplate.from_messages([
 
 聊天记录只用于理解上下文，不能作为当前订单状态。
 查询订单、订单列表等数据库信息，必须重新调用工具查询最新结果，禁止直接复制历史回答。
+查询公司资料、规则或条款时，每次都必须调用 search_knowledge 重新查询。
+用户追问“第几条、上一条、下一条”时，要结合聊天记录补全问题后再查询，禁止直接根据历史回答猜测。
 
 用户问题：{input}"""),
     ("placeholder", "{agent_scratchpad}")
