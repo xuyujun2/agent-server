@@ -1,0 +1,35 @@
+{
+  "summary": {
+    "planned": 1,
+    "completed": 1,
+    "passed": 1,
+    "failed": 0,
+    "errors": 0,
+    "call_check_pass_rate": "100.0%",
+    "scope": "仅检查工具调用和参数；不代表回答质量或真实工具执行成功率。缺信息用例的追问需人工检查。"
+  },
+  "results": [
+    {
+      "id": "query_order-01",
+      "group": "query_order",
+      "agent": "customer",
+      "question": "帮我查订单 TEST001 的状态",
+      "expected_tool": "query_order",
+      "expected_args": {
+        "order_no": "TEST001"
+      },
+      "history": [],
+      "actual_calls": [
+        {
+          "tool": "query_order",
+          "args": {
+            "order_no": "TEST001"
+          }
+        }
+      ],
+      "reply": "nice to meet you! 您查询的订单 **TEST001** 状态如下：\n\n- **商品**：测试商品\n- **金额**：99元\n- **状态**：已发货\n\n请问还有什么可以帮您的吗？",
+      "note": "工具和参数检查通过",
+      "status": "passed"
+    }
+  ]
+}

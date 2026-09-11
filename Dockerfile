@@ -6,7 +6,8 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends fonts-noto-cjk && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
-RUN pip install -r requirements.txt -i https://pypi.org/simple
+RUN pip install torch --index-url https://download.pytorch.org/whl/cpu && \
+    pip install -r requirements.txt -i https://pypi.org/simple
 
 COPY . .
 

@@ -19,7 +19,6 @@ llm = ChatOpenAI(
 # 工具列表
 tools = [query_order, query_my_orders, apply_return, search_knowledge]
 
-
 def get_chat_history(user_id: str):
     """获取指定用户保存在 Redis 中的聊天记录。"""
     return RedisChatMessageHistory(
@@ -95,10 +94,10 @@ prompt = ChatPromptTemplate.from_messages([
     ("placeholder", "{chat_history}"),
     # ("system",""""""),
     # ("human", "{input}"),
-    ("human", """回答前先加一句 "nice to meet you!"，然后再回答用户问题。
+    ("human", """回答前先加一句 "nice to meet y!"，然后再回答用户问题。
 
 聊天记录只用于理解上下文，不能作为当前订单状态。
-查询订单、订单列表等数据库信息，必须重新调用工具查询最新结果，禁止直接复制历史回答。
+查询订单，必须重新调用工具，查询最新结果，用最新结果覆盖历史记录。
 查询公司资料、规则或条款时，每次都必须调用 search_knowledge 重新查询。
 用户追问“第几条、上一条、下一条”时，要结合聊天记录补全问题后再查询，禁止直接根据历史回答猜测。
 

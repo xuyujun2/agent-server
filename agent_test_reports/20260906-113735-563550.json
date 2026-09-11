@@ -1,0 +1,50 @@
+{
+  "summary": {
+    "planned": 2,
+    "completed": 2,
+    "passed": 1,
+    "failed": 1,
+    "errors": 0,
+    "call_check_pass_rate": "50.0%",
+    "scope": "仅检查工具调用和参数；不代表回答质量或真实工具执行成功率。缺信息用例的追问需人工检查。"
+  },
+  "results": [
+    {
+      "id": "query_order-01",
+      "group": "query_order",
+      "agent": "customer",
+      "question": "帮我查订单 TEST001 的状态",
+      "expected_tool": "query_order",
+      "expected_args": {
+        "order_no": "TEST001"
+      },
+      "history": [],
+      "actual_calls": [
+        {
+          "tool": "query_order",
+          "args": {
+            "order_no": "TEST001"
+          }
+        }
+      ],
+      "reply": "nice to meet you! 我已经为您查询到订单 TEST001 的信息：\n\n- **订单号**：TEST001\n- **商品**：测试商品\n- **金额**：99元\n- **状态**：已发货\n\n请问还有什么可以帮您的吗？",
+      "note": "工具和参数检查通过",
+      "status": "passed"
+    },
+    {
+      "id": "query_order-02",
+      "group": "query_order",
+      "agent": "customer",
+      "question": "TEST001 发货了吗？",
+      "expected_tool": "query_order",
+      "expected_args": {
+        "order_no": "TEST001"
+      },
+      "history": [],
+      "actual_calls": [],
+      "reply": "nice to meet you!\n\n请问您能提供一下完整的订单号吗？您提到的 \"TEST001\" 看起来不像是完整的订单号格式。如果您能提供完整的订单号（例如 ORD 开头的订单号），我可以立即为您查询发货状态。",
+      "status": "failed",
+      "note": "预期调用1次，实际0次：[]"
+    }
+  ]
+}

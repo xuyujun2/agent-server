@@ -4,6 +4,7 @@ from prometheus_client import start_http_server
 import threading
 
 from app.api import webhook, agent_api, email_api, report_api, grading_api
+from app.tools.knowledge_tools import get_retriever
 from app.scheduler.email_scheduler import start_scheduler
 from app.utils.logger import logger
 
@@ -24,10 +25,12 @@ app.include_router(email_api.router)
 app.include_router(report_api.router)
 app.include_router(grading_api.router)
 
-# FastAPI 启动时自动执行 start_email_scheduler()
+#  FastAPI 的启动钩子
 @app.on_event("startup")
 def start_email_scheduler():
-    # - `threading.Thread()`：创建一个新线程      - `target=start_scheduler`：这个线程要执行的函数是 `start_scheduler`      - `daemon=True`：后台线程，不阻塞主程序，主程序退出时自动结束     `.start()`：启动线程
+    # 提前在启动服务时，加载重排序模型，否则回答问题时，首次加载这个模型会慢
+    # get_retriever()
+    # 启动一个新线程，在后台执行 start_scheduler 函数（定时任务，如每30分钟扫描邮件），不阻塞主程序处理请求
     threading.Thread(target=start_scheduler, daemon=True).start()
 
 @app.get("/health")

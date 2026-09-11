@@ -149,7 +149,7 @@ def run_tests(function_code: str, test_code: str) -> str:
             errors="replace",
         ).strip()
 
-        # StatusCode == 0 代表测试代码自身运行成功，但是业务代码被测试的结果，可能存在bug
+        # StatusCode == 0 代表测试代码自身运行成功，业务代码被测试的结果是 output(可能存在bug)
         if result.get("StatusCode") == 0:
             return f"测试成功：\n{output or '无输出'}"
         return f"测试失败：\n{output or '无输出'}"

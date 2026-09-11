@@ -11,6 +11,9 @@ langchain-community==0.3.13
 redis==5.2.1
 chromadb
 pypdf
+rank_bm25
+sentence-transformers
+jieba
 google-api-python-client==2.147.0
 google-auth-oauthlib==1.2.0
 google-auth-httplib2==0.2.0
