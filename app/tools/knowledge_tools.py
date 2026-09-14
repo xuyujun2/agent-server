@@ -1,3 +1,5 @@
+import json
+
 from langchain.tools import tool
 from langchain.retrievers import EnsembleRetriever, ContextualCompressionRetriever
 from langchain.retrievers.document_compressors import CrossEncoderReranker
@@ -9,7 +11,8 @@ from langchain_community.cross_encoders import HuggingFaceCrossEncoder
 from datetime import datetime, timedelta
 import jieba
 
-from build_kb import get_embeddings, VECTOR_DIR
+from build_kb import get_embeddings, VECTOR_DIR, BM25_FILE
+from app.utils.logger import logger
 
 # 这些类型需要按文件日期做过期过滤
 TIME_SENSITIVE_TYPES = ["return_policy", "shipping_policy", "price_policy", "promotion_policy"]
@@ -21,39 +24,62 @@ class SearchKnowledgeInput(BaseModel):
 
 
 _retriever = None
+_bm25_retriever = None
 
 
-def create_retriever():
-    """创建 BM25 + 向量检索 + 重排序检索器。"""
+def create_bm25_retriever():
+    """创建 BM25 检索器"""
 
-    # 加载向量库
-    vector_store = Chroma(
-        persist_directory=VECTOR_DIR,
-        embedding_function=get_embeddings(),
-    )
+    with open(BM25_FILE, "r", encoding="utf-8") as f:
+        data = json.load(f)
 
-    # vector_store.get() 返回的 data 里，文本块内容字段名是 "documents"，不是 "page_content"
-    data = vector_store.get(include=["documents", "metadatas"])
     documents = [
-        Document(page_content=text, metadata=metadata or {})
-        for text, metadata in zip(data["documents"], data["metadatas"])
+        Document(
+            page_content=item["text"],
+            metadata=item["metadata"],
+        )
+        for item in data
     ]
 
-    #  BM25建库/创建检索器
+    #  BM25建库/创建检索器   不应该把 bm25 建库 放进 build_kb.py，因为 BM25 是把数据写进内存， 如果放进build_kb脚本，那脚本执行完，bm25库会消失
     bm25_retriever = BM25Retriever.from_documents(
         documents,
         preprocess_func=lambda text: list(jieba.cut_for_search(text)),
     )
     bm25_retriever.k = 10
+    return bm25_retriever
 
-    # 创建向量检索器     as_retriever() 检索时内部会调用 similarity_search
-    vector_retriever = vector_store.as_retriever(search_kwargs={"k": 10})
 
-    # 多路召回：合并向量检索、BM25检索
-    hybrid_retriever = EnsembleRetriever(
-        retrievers=[bm25_retriever, vector_retriever],
-        weights=[0.5, 0.5],
-    )
+def get_bm25_retriever():
+    """只创建一次 BM25 检索器。"""
+    global _bm25_retriever
+    if _bm25_retriever is None:
+        _bm25_retriever = create_bm25_retriever()
+    return _bm25_retriever
+
+
+def create_retriever():
+    """多路召回 + 重排序检索器。"""
+    bm25_retriever = get_bm25_retriever()
+
+    try:
+        # 加载向量库
+        vector_store = Chroma(
+            persist_directory=VECTOR_DIR,
+            embedding_function=get_embeddings(),
+        )
+
+        # 创建向量检索器     as_retriever() 检索时内部会调用 similarity_search
+        vector_retriever = vector_store.as_retriever(search_kwargs={"k": 10})
+
+        # 多路召回：合并向量检索、BM25检索
+        hybrid_retriever = EnsembleRetriever(
+            retrievers=[bm25_retriever, vector_retriever],
+            weights=[0.5, 0.5],
+        )
+    except Exception:
+        logger.exception("Chroma加载失败，改用BM25")
+        return bm25_retriever
 
     # 暂时不用重排序，因为会慢
     if not USE_RERANKER:
@@ -85,7 +111,11 @@ def get_retriever():
 @tool(args_schema=SearchKnowledgeInput)
 def search_knowledge(question: str) -> str:
     """查询公司知识库。用户询问公司资料、业务规则或常见问题时调用。"""
-    docs = get_retriever().invoke(question)
+    try:
+        docs = get_retriever().invoke(question)
+    except Exception:
+        logger.exception("Chroma查询失败，改用BM25")
+        docs = get_bm25_retriever().invoke(question)
 
     if not docs:
         return "知识库中没有找到相关内容"

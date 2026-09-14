@@ -6,6 +6,7 @@ from langchain_community.chat_message_histories import RedisChatMessageHistory
 from app.config import Config
 from app.tools.order_tools import query_order, query_my_orders, apply_return
 from app.tools.knowledge_tools import search_knowledge
+from app.services.memory_service import build_long_term_memory, save_long_term_memory
 from app.utils.logger import logger
 
 # 初始化模型
@@ -27,7 +28,7 @@ def get_chat_history(user_id: str):
         ttl=86400 * 7,
     )
 
-# 提示词模板
+# 提示词模板   long_term_memory: 长期记忆      chat_history: 短期记忆
 prompt = ChatPromptTemplate.from_messages([
     ("system", """你是一个专业的电商客服助手。你的职责：
 1. 帮用户查询订单信息
@@ -91,13 +92,14 @@ prompt = ChatPromptTemplate.from_messages([
 工具返回：未找到该订单，请确认订单号是否正确
 正确回答：未找到该订单，请确认订单号是否正确。
 禁止：修改工具结果或捏造订单信息。"""),
+    ("system", "已知用户长期信息：\n{long_term_memory}"),
     ("placeholder", "{chat_history}"),
     # ("system",""""""),
     # ("human", "{input}"),
     ("human", """回答前先加一句 "nice to meet y!"，然后再回答用户问题。
 
 聊天记录只用于理解上下文，不能作为当前订单状态。
-查询订单，必须重新调用工具，查询最新结果，用最新结果覆盖历史记录。
+查询订单、申请退货，必须重新调用工具，查询最新结果，用最新结果覆盖历史记录。
 查询公司资料、规则或条款时，每次都必须调用 search_knowledge 重新查询。
 用户追问“第几条、上一条、下一条”时，要结合聊天记录补全问题后再查询，禁止直接根据历史回答猜测。
 
@@ -122,11 +124,14 @@ def create_agent_executor(user_id: str):
         logger.info(f"用户 {user_id} 提问：{question}")
         result = executor.invoke({
             "input": question,
-            "chat_history": memory.messages
+            "chat_history": memory.messages[-10:],
+            "long_term_memory": build_long_term_memory(user_id),
         })
         # 保存对话记忆
         memory.add_user_message(question)
         memory.add_ai_message(result["output"])
+        # 保存长期记忆
+        save_long_term_memory(user_id, question, result["output"])
         logger.info(f"用户 {user_id} 回复：{result['output']}")
         return result["output"]
     

@@ -13,6 +13,7 @@ build_kb.py — 知识库建库脚本
   知识库存到向量库步骤：读取 - 打元数据标签(date、source、type) - 切片 -入库 - 检索
 """
 import argparse
+import json
 import os
 import re
 
@@ -26,6 +27,20 @@ load_dotenv()
 
 # 向量库的持久化存储目录
 VECTOR_DIR = "./data/vector_store"
+BM25_FILE = "./data/bm25_docs.json"
+
+
+def save_bm25_docs(chunks):
+    """把切片独立保存，供 BM25 使用。"""
+    data = [
+        {
+            "text": chunk.page_content,
+            "metadata": chunk.metadata,
+        }
+        for chunk in chunks
+    ]
+    with open(BM25_FILE, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False)
 
 def get_embeddings():
     """创建向量模型。"""
@@ -94,6 +109,9 @@ def init_index(kb_dir: str):
 
     splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
     chunks = splitter.split_documents(all_docs)
+
+    # 单独保存 BM25 数据，不依赖 Chroma
+    save_bm25_docs(chunks)
 
     # 存到向量库
     Chroma.from_documents(
