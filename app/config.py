@@ -21,6 +21,11 @@ class Config:
     LLM_TIMEOUT = float(os.getenv("LLM_TIMEOUT", "30"))
     LLM_MAX_RETRIES = int(os.getenv("LLM_MAX_RETRIES", "2"))
 
+    # 阿里云百炼语音识别
+    DASHSCOPE_API_KEY = os.getenv("DASHSCOPE_API_KEY") or os.getenv("VISION_API_KEY", "")
+    ASR_MODEL_NAME = os.getenv("ASR_MODEL_NAME", "qwen3-asr-flash")
+    ASR_BASE_URL = os.getenv("ASR_BASE_URL") or os.getenv("VISION_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1")
+
     # 视觉识别模型（只负责把答案和试卷图片识别成文字）
     VISION_API_KEY = os.getenv("VISION_API_KEY", "")
     VISION_MODEL_NAME = os.getenv("VISION_MODEL_NAME", "gpt-5")
