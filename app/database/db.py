@@ -1,15 +1,27 @@
 import pymysql
+from dbutils.pooled_db import PooledDB
+
 from app.config import Config
 
+
+pool = PooledDB(
+    creator=pymysql,
+    maxconnections=10,
+    mincached=2,
+    maxcached=5,
+    blocking=True,
+    host=Config.DB_HOST,
+    user=Config.DB_USER,
+    password=Config.DB_PASSWORD,
+    database=Config.DB_NAME,
+    cursorclass=pymysql.cursors.DictCursor,
+    autocommit=True,
+)
+
+
 def get_db_connection():
-    return pymysql.connect(
-        host=Config.DB_HOST,
-        user=Config.DB_USER,
-        password=Config.DB_PASSWORD,
-        database=Config.DB_NAME,
-        cursorclass=pymysql.cursors.DictCursor,  # 返回字典格式
-        autocommit=True
-    )
+    """从连接池获取数据库连接。"""
+    return pool.connection()
 
 def execute_query(sql, params=None):
     """执行查询，返回结果列表"""

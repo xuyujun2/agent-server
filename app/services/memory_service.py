@@ -18,6 +18,8 @@ llm = ChatOpenAI(
     api_key=Config.OPENAI_API_KEY,
     base_url=Config.BASE_URL,
     temperature=0,
+    timeout=Config.LLM_TIMEOUT,
+    max_retries=Config.LLM_MAX_RETRIES,
 )
 
 

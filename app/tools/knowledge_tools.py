@@ -109,13 +109,13 @@ def get_retriever():
 
 
 @tool(args_schema=SearchKnowledgeInput)
-def search_knowledge(question: str) -> str:
+async def search_knowledge(question: str) -> str:
     """查询公司知识库。用户询问公司资料、业务规则或常见问题时调用。"""
     try:
-        docs = get_retriever().invoke(question)
+        docs = await get_retriever().ainvoke(question)
     except Exception:
         logger.exception("Chroma查询失败，改用BM25")
-        docs = get_bm25_retriever().invoke(question)
+        docs = await get_bm25_retriever().ainvoke(question)
 
     if not docs:
         return "知识库中没有找到相关内容"

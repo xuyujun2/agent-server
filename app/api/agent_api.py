@@ -1,30 +1,63 @@
 import asyncio
 import json
+import time
 
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse  # FastAPI 的流式响应，用于实现 SSE
+from redis.asyncio import Redis
+
+from app.config import Config
 from app.models.schemas import AskRequest
 from app.agents.ask_agent import create_agent_executor, get_chat_history
 from app.utils.logger import logger
 from app.utils.dingtalk_alert import send_dingtalk_alert
 
 router = APIRouter(prefix="/agent", tags=["客服"])
+# 限流，服务器层面：每个 Worker 同时最多执行指定数量的 Agent 请求。
+agent_semaphore = asyncio.Semaphore(Config.AGENT_MAX_CONCURRENCY)
+# 限流，用户层面：接口限流计数保存在 Redis 中，多个 Worker 共享。
+rate_limit_redis = Redis.from_url(Config.REDIS_URL, decode_responses=True)
 
-sessions = {}
+
+async def check_rate_limit(user_id: str):
+    """限制同一用户每分钟调用 Agent 接口的次数。"""
+    minute = int(time.time() // 60)  # 当前是第几分钟（时间戳除以60取整，每隔2分钟的话，就 // 120）
+    key = f"rate_limit:agent:{user_id}:{minute}"
+
+    # local count = redis.call('INCR', KEYS[1])   key计数+1
+    count = await rate_limit_redis.eval(
+        """
+        local count = redis.call('INCR', KEYS[1])
+        if count == 1 then
+            redis.call('EXPIRE', KEYS[1], ARGV[1])
+        end
+        return count
+        """,
+        1,
+        key,
+        60,  # 过60秒，自动清空
+    )
+
+    if count > Config.AGENT_RATE_LIMIT_PER_MINUTE:
+        raise HTTPException(status_code=429, detail="请求过于频繁，请稍后再试")
 
 @router.post("/ask")
-def ask(request: AskRequest):
+async def ask(request: AskRequest):
     """客服对话接口"""
+    await check_rate_limit(request.user_id)
     try:
         raise Exception("测试告警")  # 强制触发异常，测试钉钉告警
-    
-        # 获取或创建用户的Agent执行器
-        if request.user_id not in sessions:
-            sessions[request.user_id] = create_agent_executor(request.user_id)
         
-        # 从字典里取 run 函数执行
-        agent_wrapper = sessions[request.user_id]
-        answer = agent_wrapper["run"](request.question)
+        # Agent 执行器不保存在本地 sessions 中，聊天记录统一从 Redis 读取。
+        agent_wrapper = create_agent_executor(request.user_id)
+        try:
+            await asyncio.wait_for(agent_semaphore.acquire(), 5)
+        except TimeoutError:
+            return {"code": 1, "msg": "当前咨询人数较多，请稍后再试"}
+        try:
+            answer = await agent_wrapper["run"](request.question)
+        finally:
+            agent_semaphore.release()
         return {"code": 0, "data": {"answer": answer}}
     
     except Exception as e:
@@ -36,12 +69,10 @@ def ask(request: AskRequest):
 @router.post("/ask/stream")
 async def ask_stream(request: AskRequest):
     """SSE 流式客服对话接口：把完整答案逐字发给前端。"""
+    await check_rate_limit(request.user_id)
 
-    if request.user_id not in sessions:
-        sessions[request.user_id] = create_agent_executor(request.user_id)
-
-    # sessions[request.user_id] => { "run": run, "memory": memory }
-    agent_wrapper = sessions[request.user_id]
+    # Agent 执行器不保存在本地 sessions 中，支持多 Worker 读取同一份 Redis 记录。
+    agent_wrapper = create_agent_executor(request.user_id)
 
     # 获取模型回答，把回答逐个生成文字
     async def event_stream():
@@ -49,9 +80,16 @@ async def ask_stream(request: AskRequest):
             # 先告诉前端：本次流式回答已经开始    _sse_event("start") 生成 data: {"type":"start","content":""}\n\n
             yield _sse_event("start")
 
-            # 执行了agent函数，传递了 request.question，同时把函数 agent 放到独立线程执行，避免阻塞 FastAPI 的事件循环。
-            # answer = await asyncio.to_thread(agent, request.question)
-            answer = await asyncio.to_thread(agent_wrapper["run"], request.question)
+            # 限流
+            try:
+                await asyncio.wait_for(agent_semaphore.acquire(), 5)
+            except TimeoutError:
+                yield _sse_event("error", "当前咨询人数较多，请稍后再试")
+                return
+            try:
+                answer = await agent_wrapper["run"](request.question)
+            finally:
+                agent_semaphore.release()
 
             for char in answer:
                 # yield 是生成器，每次返回一个数据块并暂停，供 StreamingResponse 逐块发送给前端。
@@ -92,16 +130,12 @@ def _sse_event(event_type: str, content: str = "") -> str:
 
 
 @router.get("/history")
-def get_history(user_id: str):
+async def get_history(user_id: str):
     """获取用户聊天历史"""
-    # executor 在内存中就复用；服务重启后则直接从 Redis 读取
-    memory = (
-        sessions[user_id]["memory"]
-        if user_id in sessions
-        else get_chat_history(user_id)
-    )
+    memory = get_chat_history(user_id)
+    messages = await asyncio.to_thread(lambda: memory.messages)
     history = [
         {"role": msg.type, "content": msg.content}
-        for msg in memory.messages
+        for msg in messages
     ]
     return {"code": 0, "data": {"history": history}}

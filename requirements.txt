@@ -4,6 +4,7 @@ langchain==0.3.13
 langchain-openai==0.2.14
 pydantic==2.11.10
 pymysql==1.1.1
+DBUtils
 python-dotenv==1.0.1
 requests==2.32.3
 prometheus-client==0.21.0

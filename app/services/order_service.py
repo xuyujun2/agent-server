@@ -1,14 +1,12 @@
 from app.database.db import execute_query, execute_update
 from app.utils.logger import logger
 
-def get_order_by_no(order_no: str, user_id: str = None):
-    """查询订单"""
-    sql = "SELECT * FROM orders WHERE order_no = %s"
-    params = [order_no]
-    if user_id:
-        sql += " AND user_id = %s"
-        params.append(user_id)
-    result = execute_query(sql, params)
+def get_order_by_no(order_no: str, user_id: str):
+    """按订单号和用户ID查询订单。"""
+    result = execute_query(
+        "SELECT * FROM orders WHERE order_no = %s AND user_id = %s",
+        (order_no, user_id),
+    )
     return result[0] if result else None
 
 def get_orders_by_user(user_id: str):
@@ -18,12 +16,12 @@ def get_orders_by_user(user_id: str):
         (user_id,)
     )
 
-def check_return_eligible(order_no: str) -> tuple:
+def check_return_eligible(order_no: str, user_id: str) -> tuple:
     """
     检查是否满足退货条件
     返回：(是否可退, 原因)
     """
-    order = get_order_by_no(order_no)
+    order = get_order_by_no(order_no, user_id)
     if not order:
         return False, "订单不存在"
     
@@ -39,7 +37,7 @@ def check_return_eligible(order_no: str) -> tuple:
 def create_return_request(order_no: str, user_id: str, reason: str):
     """创建退货申请"""
     # 再次检查是否可退
-    eligible, msg = check_return_eligible(order_no)
+    eligible, msg = check_return_eligible(order_no, user_id)
     if not eligible:
         return {"success": False, "msg": msg}
     

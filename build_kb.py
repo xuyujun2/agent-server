@@ -88,6 +88,7 @@ def tag_docs(docs, file_path: str):
 def init_index(kb_dir: str):
     """首次建库：读目录下所有 pdf/txt，切块，一次性建库"""
     all_docs = []
+    # os.walk() 就是把一个目录下的所有子目录和文件，一层一层全遍历一遍。
     for root, _, files in os.walk(kb_dir):
         for f in files:
             path = os.path.join(root, f)

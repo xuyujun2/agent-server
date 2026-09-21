@@ -18,6 +18,8 @@ class Config:
     # MODEL_NAME = os.getenv("MODEL_NAME", "gpt-3.5-turbo")
     MODEL_NAME = os.getenv("MODEL_NAME", "deepseek-chat")  # deepseek的 MODEL_NAME，先测试用，后面要改成 OpenAI Platform 的 MODEL_NAME
     BASE_URL = os.getenv("BASE_URL", "https://api.deepseek.com/v1")  # deepseek的 API key，先测试用，后面要改成 OpenAI Platform 的 API key
+    LLM_TIMEOUT = float(os.getenv("LLM_TIMEOUT", "30"))
+    LLM_MAX_RETRIES = int(os.getenv("LLM_MAX_RETRIES", "2"))
 
     # 视觉识别模型（只负责把答案和试卷图片识别成文字）
     VISION_API_KEY = os.getenv("VISION_API_KEY", "")
@@ -30,6 +32,8 @@ class Config:
     
     # 服务
     MAX_RETURN_ROUNDS = int(os.getenv("MAX_RETURN_ROUNDS", "3"))
+    AGENT_MAX_CONCURRENCY = int(os.getenv("AGENT_MAX_CONCURRENCY", "10"))
+    AGENT_RATE_LIMIT_PER_MINUTE = int(os.getenv("AGENT_RATE_LIMIT_PER_MINUTE", "20"))
 
     # Gmail
     GMAIL_CREDENTIALS_PATH = os.getenv("GMAIL_CREDENTIALS_PATH", "credentials.json")
