@@ -1,4 +1,5 @@
 import asyncio
+from datetime import date
 import json
 
 from pydantic import BaseModel, Field, ValidationError
@@ -77,6 +78,8 @@ prompt = ChatPromptTemplate.from_messages([
 - 订单和退货工具只查询当前用户的数据，不使用用户问题中提到的其他用户ID
 - 如果用户没给订单号，先问他要
 - 保持礼貌、专业
+- 知识库里查询不到的，你就用自己的常识回答
+- 普通非业务问题直接简短回答，不要强行引导到订单或退货业务
 
 常见场景示例：
 
@@ -130,6 +133,7 @@ prompt = ChatPromptTemplate.from_messages([
 正确回答：未找到该订单，请确认订单号是否正确。
 禁止：修改工具结果或捏造订单信息。"""),
     ("system", "已知用户长期信息：\n{long_term_memory}"),
+    ("system", "当前日期：{current_date}"),
     ("system", "最终回复请按以下 JSON Schema 输出，不要输出其他内容：{output_schema}。调用工具时仍正常传入工具参数。"),
     ("placeholder", "{chat_history}"),
     # ("system",""""""),
@@ -163,13 +167,14 @@ def create_agent_executor(user_id: str):
         logger.info(f"用户 {user_id} 提问：{question}")
 
         # RedisChatMessageHistory 是同步接口，放到线程池中执行，避免阻塞事件循环。
-        chat_history = await asyncio.to_thread(lambda: memory.messages[-10:])
+        chat_history = await asyncio.to_thread(lambda: memory.messages[-2:])
         long_term_memory = await asyncio.to_thread(build_long_term_memory, user_id)
 
         result = await executor.ainvoke({
             "input": question,
             "chat_history": chat_history,
             "long_term_memory": long_term_memory,
+            "current_date": date.today().strftime("%Y年%m月%d日"),
             "output_schema": OUTPUT_SCHEMA,
         })
         answer = await validate_answer(result["output"])

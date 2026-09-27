@@ -1,0 +1,170 @@
+{
+  "input": "C:\\Users\\28763\\Desktop\\agent\\customer_service_agent\\\u5f90\u7389\u4fca-AI Agent\u5f00\u53d1\u5de5\u7a0b\u5e08\u7b80\u5386-\u6392\u7248\u4fee\u6b63\u7248.docx",
+  "fonts_by_char_count": {
+    "Arial": 4354
+  },
+  "direct_run_formatting_runs": 179,
+  "direct_paragraph_formatting_paragraphs": 88,
+  "heading_like_paragraphs_not_heading_style": [
+    {
+      "para_index": 1,
+      "text": "\u5f90\u7389\u4fca",
+      "style": "Normal"
+    },
+    {
+      "para_index": 2,
+      "text": "AI Agent / Python \u540e\u7aef\u5f00\u53d1\u5de5\u7a0b\u5e08",
+      "style": "Normal"
+    },
+    {
+      "para_index": 4,
+      "text": "\u4e2a\u4eba\u6982\u8ff0",
+      "style": "Resume Heading"
+    },
+    {
+      "para_index": 8,
+      "text": "\u4e13\u4e1a\u6280\u80fd",
+      "style": "Resume Heading"
+    },
+    {
+      "para_index": 10,
+      "text": "Python \u540e\u7aef\uff1aPython\u3001FastAPI\u3001Pydantic\u3001RESTful API\u3001SSE\u3001PyMySQL\u3001MySQL\u3001\u5b9a\u65f6\u4efb\u52a1",
+      "style": "Normal"
+    },
+    {
+      "para_index": 11,
+      "text": "\u5de5\u7a0b\u4e0e\u90e8\u7f72\uff1aGit\u3001Vite\u3001Webpack\u3001Docker\u3001Dockerfile\u3001Nginx\u3001Linux\u3001\u963f\u91cc\u4e91 ECS\u3001\u73af\u5883\u53d8\u91cf\u7ba1\u7406",
+      "style": "Normal"
+    },
+    {
+      "para_index": 12,
+      "text": "\u6d4b\u8bd5\u4e0e\u534f\u8bae\uff1apytest\u3001MCP\u3001stdio MCP\u3001Streamable HTTP MCP\u3001Gmail API\u3001OAuth 2.0",
+      "style": "Normal"
+    },
+    {
+      "para_index": 13,
+      "text": "\u6587\u6863\u4e0e\u591a\u6a21\u6001\uff1aPDF \u89e3\u6790\u3001\u56fe\u7247 Base64\u3001Pillow\u3001\u89c6\u89c9\u8bc6\u522b\u3001\u7ed3\u6784\u5316 JSON \u5904\u7406",
+      "style": "Normal"
+    },
+    {
+      "para_index": 15,
+      "text": "\u5de5\u4f5c\u7ecf\u5386",
+      "style": "Resume Heading"
+    },
+    {
+      "para_index": 16,
+      "text": "\u5317\u4eac\u65b0\u7f8e\u4e92\u901a\u79d1\u6280\u6709\u9650\u516c\u53f8  |  Web \u524d\u7aef\u5de5\u7a0b\u5e08  |  2025.05.06 - 2026.03.24",
+      "style": "Job Title"
+    },
+    {
+      "para_index": 17,
+      "text": "\u9879\u76ee\uff1aAI\u667a\u80fd\u5ba2\u670d\u7cfb\u7edf",
+      "style": "Normal"
+    },
+    {
+      "para_index": 18,
+      "text": "\u9879\u76ee\u63cf\u8ff0\uff1a\u4e3a\u865a\u62df\u4eba\u5ba2\u6237\u7aef\u4ea7\u54c1\u63d0\u4f9bAI\u5ba2\u670d\uff0c\u5904\u7406\u7528\u6237\u5145\u503c\u3001\u793c\u7269\u8ba2\u5355\u3001\u9000\u6b3e\u54a8\u8be2\u3001\u77e5\u8bc6\u68c0\u7d22\uff0c\u652f\u6301\u6587\u5b57\u4e0e\u8bed\u97f3\u591a\u6a21\u6001\u4ea4\u4e92\u3002",
+      "style": "Normal"
+    },
+    {
+      "para_index": 19,
+      "text": "\u8d1f\u8d23\u5185\u5bb9\uff1a",
+      "style": "Normal"
+    },
+    {
+      "para_index": 35,
+      "text": "\u9879\u76ee\uff1a\u865a\u62df\u4eba\uff08Chatlyverse\uff09",
+      "style": "Normal"
+    },
+    {
+      "para_index": 36,
+      "text": "\u9879\u76ee\u63cf\u8ff0\uff1a\u591a\u89d2\u8272\u865a\u62df\u4eba\u804a\u5929\u4ea7\u54c1\uff0c\u540e\u53f0\u914d\u7f6e\u89d2\u8272\u8d44\u6599\u3001\u6a21\u578b\u548c Prompt\uff1b\u7528\u6237\u89c2\u770b\u6fc0\u52b1\u89c6\u9891\u83b7\u53d6\u804a\u5929\u6b21\u6570\uff0c\u4ea7\u54c1\u901a\u8fc7\u5e7f\u544a\u8425\u6536\u3002",
+      "style": "Normal"
+    },
+    {
+      "para_index": 37,
+      "text": "\u8d1f\u8d23\u5185\u5bb9\uff1a",
+      "style": "Normal"
+    },
+    {
+      "para_index": 41,
+      "text": "\u9879\u76ee\uff1a\u4f18\u60e0\u5238 H5\uff08Couponhubx\uff09",
+      "style": "Normal"
+    },
+    {
+      "para_index": 42,
+      "text": "\u9879\u76ee\u63cf\u8ff0\uff1a\u805a\u5408\u5404\u5927\u54c1\u724c\u4f18\u60e0\u5238\uff0c\u7528\u6237\u590d\u5236\u54c1\u724c Code \u540e\u8df3\u8f6c\u5b98\u7f51\u83b7\u53d6\u4f18\u60e0\uff0c\u9879\u76ee\u901a\u8fc7\u5e7f\u544a\u548c\u8fd4\u5229\u8425\u6536\u3002",
+      "style": "Normal"
+    },
+    {
+      "para_index": 43,
+      "text": "\u8d1f\u8d23\u5185\u5bb9\uff1a\u8d1f\u8d23\u9879\u76ee\u642d\u5efa\u548c\u5168\u90e8\u9875\u9762\u5f00\u53d1\uff0c\u5b8c\u6210\u54c1\u724c\u4f18\u60e0\u5238\u6d41\u7a0b\u3001\u6a2a\u5e45/\u951a\u5b9a/\u5927\u63d2\u5c4f\u5e7f\u544a\u3001Firebase \u57cb\u70b9\u3001rem \u79fb\u52a8\u7aef\u9002\u914d\u53ca\u52a0\u8f7d\u901f\u5ea6\u4f18\u5316\u3002",
+      "style": "Normal"
+    },
+    {
+      "para_index": 44,
+      "text": "\u6280\u672f\u6808\uff1aVue 3\u3001Pinia\u3001\u7ec4\u4ef6\u901a\u4fe1\u3001Google AdSense\u3001Firebase\u3001Fetch\u3001Storage\u3001Watch\u3001Computed",
+      "style": "Normal"
+    }
+  ],
+  "examples": {
+    "direct_paragraph_formatting": [
+      {
+        "para_index": 1,
+        "text": "\u5f90\u7389\u4fca",
+        "style": "Normal"
+      },
+      {
+        "para_index": 2,
+        "text": "AI Agent / Python \u540e\u7aef\u5f00\u53d1\u5de5\u7a0b\u5e08",
+        "style": "Normal"
+      },
+      {
+        "para_index": 3,
+        "text": "15321875083  |  aa349593361@sina.com  |  \u5317\u4eac\u660c\u5e73\u533a\u9f99\u9526\u82d1  |  \u8f6f\u4ef6\u5de5\u7a0b \u672c\u79d1",
+        "style": "Normal"
+      },
+      {
+        "para_index": 4,
+        "text": "\u4e2a\u4eba\u6982\u8ff0",
+        "style": "Resume Heading"
+      },
+      {
+        "para_index": 5,
+        "text": "\u72ec\u7acb\u5b8c\u6210\u667a\u80fd\u5ba2\u670d\u3001ai\u804a\u5929\u3001ai\u6279\u6539\u4f5c\u4e1a\u7b49\u9879\u76ee\uff0c\u5177\u5907 AgentExecutor\u3001Harness\u3001LLM\u3001Tool Calling\u3001RAG\u3001\u591a\u8def\u53ec\u56de\u3001\u91cd\u6392\u5e8f\u3001\u591aagent\u7cfb\u7edf\u3001\u591a\u6a21\u6001\u3001\u957f\u671f\u8bb0\u5fc6\u53ca\u591a\u8f6e\u5bf9\u8bdd\u7b49 AI Agent \u6838\u5fc3\u80fd\u529b\u3002",
+        "style": "List Bullet"
+      }
+    ],
+    "direct_run_formatting": [
+      {
+        "para_index": 1,
+        "run_text": "\u5f90\u7389\u4fca",
+        "style": "Normal"
+      },
+      {
+        "para_index": 2,
+        "run_text": "AI Agent / Python \u540e\u7aef\u5f00\u53d1\u5de5\u7a0b\u5e08",
+        "style": "Normal"
+      },
+      {
+        "para_index": 3,
+        "run_text": "15321875083  |  aa349593361@sina.com  |  \u5317\u4eac\u660c\u5e73\u533a\u9f99\u9526\u82d1  |  ",
+        "style": "Normal"
+      },
+      {
+        "para_index": 3,
+        "run_text": "\u8f6f\u4ef6\u5de5\u7a0b \u672c\u79d1",
+        "style": "Normal"
+      },
+      {
+        "para_index": 4,
+        "run_text": "\u4e2a\u4eba\u6982\u8ff0",
+        "style": "Resume Heading"
+      }
+    ]
+  },
+  "notes": [
+    "Direct formatting is not always wrong, but it often causes inconsistent output when templates change.",
+    "Heading-like paragraphs not using Heading styles can break TOC and accessibility."
+  ]
+}
